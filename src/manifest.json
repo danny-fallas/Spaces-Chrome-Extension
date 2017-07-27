@@ -1,0 +1,36 @@
+{
+    "manifest_version": 2,
+    "name": "Spaces for Chrome",
+    "version": "1.0.0",
+    "description": "Do more with less in mind.",
+    "icons": {
+        "32": "",
+        "128": ""
+    },
+    "browser_action": {
+        "default_icon": "",
+        "default_title": "Save Space"
+    },
+    "content_scripts": [
+        {
+            "js": [
+                "js/assets/jquery-3.2.1.slim.min.js",
+                "js/contentscript.js"
+            ],
+            "matches": [
+                "*"
+            ]
+        }
+    ],
+    "background": {
+        "scripts": [
+            "js/background.js"
+        ]
+    },
+    "web_accessible_resources": [
+        "js/background.js"
+    ],
+    "permissions": [
+        "tabs"
+    ]
+}
