@@ -4,11 +4,10 @@
     "version": "1.0.0",
     "description": "Do more with less in mind.",
     "icons": {
-        "32": "",
-        "128": ""
+        "128": "media/spaces.png"
     },
     "browser_action": {
-        "default_icon": "",
+        //"default_icon": "",
         "default_title": "Save Space"
     },
     "content_scripts": [
@@ -18,7 +17,7 @@
                 "js/contentscript.js"
             ],
             "matches": [
-                "*"
+                "<all_urls>"
             ]
         }
     ],
@@ -28,7 +27,8 @@
         ]
     },
     "web_accessible_resources": [
-        "js/background.js"
+        "js/background.js",
+        "media/spaces.png"
     ],
     "permissions": [
         "tabs"
