@@ -14,6 +14,13 @@ function SaveCurrentSpace() {
 }
 
 function LoadSpace() {
+    if (localStorage.getItem('space_0') !== 'undefined') {
+        var result = JSON.parse(localStorage.getItem('space_0'));
+        if(Array.isArray(result) && result.length > 0){
+            space = result.splice(0);
+        }
+    }
+
     space.forEach(function (currentValue, index, array) {
         chrome.tabs.create(currentValue, callback);
 
@@ -41,6 +48,7 @@ function SaveAndCloseTab(tab) {
 
     function callback() {
         space.push(_tab);
+        localStorage.setItem('space_0', JSON.stringify(space));
     }
 }
 
