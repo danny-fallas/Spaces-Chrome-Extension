@@ -1,23 +1,51 @@
 'use strict';
-var space = [];
-var newTab = "chrome://newtab/";
+const newTab = "chrome://newtab/";
 
-function SaveCurrentSpace() {
+// const createDB = () => {
+//     idb.open('products', 1, (upgradeDB) => {
+//         var store = upgradeDB.createObjectStore('beverages', {
+//             keyPath: 'id'
+//         });
+//         store.put({ id: 123, name: 'coke', price: 10.99, quantity: 200 });
+//         store.put({ id: 321, name: 'pepsi', price: 8.99, quantity: 100 });
+//         store.put({ id: 222, name: 'water', price: 11.99, quantity: 300 });
+//     });
+// }
+
+// self.addEventListener('activate', (event) => {
+//     event.waitUntil(createDB());
+// });
+
+// const readDB = () => {
+//     idb.open('products', 1).then(function (db) {
+//         var tx = db.transaction(['beverages'], 'readonly');
+//         var store = tx.objectStore('beverages');
+//         return store.getAll();
+//     }).then(function (items) {
+//         // Use beverage data
+//     });
+// };
+
+const GetSpaceOnLocalStorage = () => {
+    return JSON.parse(localStorage.getItem('space_0'));
+};
+
+const SaveCurrentSpace = () => {
     chrome.tabs.create({ "url": newTab });
-    chrome.tabs.query({ "currentWindow": true }, callback);
-
-    function callback(tabs) {
-        tabs.forEach(function (currentValue, index, array) {
+    chrome.tabs.query({ "currentWindow": true }, (tabs) => {
+        tabs.forEach((currentValue, index, array) => {
             SaveAndCloseTab(currentValue);
         });
-    }
-}
+    });
+};
 
-function LoadSpace() {
+const LoadSpace = () => {
+    let space = [];
+
     if (localStorage.getItem('space_0') !== 'undefined') {
-        var result = JSON.parse(localStorage.getItem('space_0'));
-        if(Array.isArray(result) && result.length > 0){
-            space = result.splice(0);
+        const result = GetSpaceOnLocalStorage()
+        if (Array.isArray(result) && result.length > 0) {
+            space = [...result];
         }
     }
 
@@ -28,31 +56,44 @@ function LoadSpace() {
             array.splice(index, 1);
         }
     });
+};
 
-    space = [];
-}
-
-function SaveAndCloseTab(tab) {
+const SaveAndCloseTab = (tab) => {
     if (!tab || (tab && (tab.pinned || tab.url === newTab))) {
         return;
     }
 
-    var _tab = {
+    const _tab = {
         index: tab.index,
         url: tab.url,
         active: tab.active,
         selected: tab.selected,
-    }
+    };
 
-    chrome.tabs.remove(tab.id, callback);
+    console.log(_tab)
 
-    function callback() {
-        space.push(_tab);
-        localStorage.setItem('space_0', JSON.stringify(space));
-    }
-}
+    // chrome.tabs.remove(tab.id, () => {
+    //     space.push(_tab);
+    //     localStorage.setItem('space_0', JSON.stringify(space));
+    // });
+};
 
-chrome.browserAction.onClicked.addListener(function (tab) {
+// const runScript = (code) => {
+//     try {
+//         if (code.code)
+//             chrome.scripting.executeScript(_tabId, code, (response) => {
+//                 console.debug(response);
+//             });
+//         else if (code.file)
+//             chrome.scripting.executeScript(_tabId, code);
+//     } catch (e) {
+//         console.error('ERROR@runScript: ' + e);
+//     }
+// };
+
+chrome.action.onClicked.addListener((tab) => {
+    const space = GetSpaceOnLocalStorage();
+
     if (space.length > 0) {
         LoadSpace();
     } else {
@@ -60,20 +101,5 @@ chrome.browserAction.onClicked.addListener(function (tab) {
     }
 });
 
-function runScript(code) {
-    try {
-        if (code.code)
-            chrome.tabs.executeScript(_tabId, code, callback);
-        else if (code.file)
-            chrome.tabs.executeScript(_tabId, code);
-    } catch (e) {
-        //console.error('ERROR@chrome.tabs.executeScript: ' + e);
-    }
-
-    function callback(response) {
-        console.debug(response);
-    }
-}
-
-//Load content script
-runScript({ file: 'contentscript.js' });
+// //Load content script
+// runScript({ file: 'contentscript.js' });
